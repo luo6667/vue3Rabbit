@@ -1,12 +1,14 @@
 <script setup></script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <!-- 一级路由出口组件 -->
+   <router-view></router-view>
   <el-button type="primary" disabled>Primary</el-button>
+  <div class="test">测试</div>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+    .test{
+      color: $priceColor;
+    }
+</style>
