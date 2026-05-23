@@ -1,5 +1,5 @@
 <script setup>
-   import HomePanel from './Homepanel.vue'
+   import HomePanel from './HomePanel.vue'
    import { findNewAPI } from '@/apis/home'
    import { ref,onMounted } from 'vue'
 
@@ -7,7 +7,6 @@
   const newList = ref([])
   const getNewList = async () => {
     const res = await findNewAPI()
-    console.log(res)
     newList.value = res.result
   }
   onMounted(() => {
