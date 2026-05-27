@@ -1,33 +1,60 @@
 // 封装购物车模块
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useUserStore } from './userStore'
+import { insertCartAPI,findNewCartListAPI,delCartAPI } from '@/apis/cart'
 
 export const useCartStore = defineStore('cart',() => {
+  const userStore = useUserStore()
+  const isLogin = computed(() => userStore.userInfo.token)
   // 1.定义管理购物车数据的state
   const cartList = ref([])
+  // 获取最新购物车列表action
+  const updateNewList = async () => {
+    const res = await findNewCartListAPI()
+    cartList.value = res.result
+  }
   // 定义操作这个state的action函数
-  const addCart = (goods) => {
-    console.log("添加购物车的goods",goods)
-    // 添加购物车操作
-    // 已添加过的商品，直接count + 1增加数量
+  const addCart = async (goods) => {
+    const {skuId,count} = goods
+    if(isLogin.value){
+      // 登录之后的加入购物车逻辑
+      await insertCartAPI({skuId,count})
+      updateNewList()
+    }else{
+      // 添加购物车操作
+      // 已添加过的商品，直接count + 1增加数量
 
-    // 未添加过的商品，直接push添加到购物车
-    // 通过匹配传递过来的商品对象中的skuId能不能在cartList中找到,找到了就是添加过
-    const item = cartList.value.find((item) => goods.skuId === item.skuId)
-    if(item){
-      item.count += goods.count
-    } else {
-      cartList.value.push(goods)
+      // 未添加过的商品，直接push添加到购物车
+      // 通过匹配传递过来的商品对象中的skuId能不能在cartList中找到,找到了就是添加过
+      const item = cartList.value.find((item) => goods.skuId === item.skuId)
+      if(item){
+        item.count += goods.count
+      } else {
+        cartList.value.push(goods)
+      }
     }
+    
   }
 
   // 删除购物车
-  const delCart = (skuId) => {
-    // 1.找到要删除项的下标值 splice
-    // 2.使用数组的过滤方法 filter
-    // 用findIndex去找到与当前的skuId相同的那个商品也就是item，然后删掉这个元素
-    const idx = cartList.value.findIndex((item) => skuId === item.skuId)
-    cartList.value.splice(idx,1)
+  const delCart = async (skuId) => {
+    if(isLogin.value){
+      // 调用接口实现接口购物车中的删除功能
+      await delCartAPI([skuId])
+      updateNewList()
+    } else {
+      // 1.找到要删除项的下标值 splice
+      // 2.使用数组的过滤方法 filter
+      // 用findIndex去找到与当前的skuId相同的那个商品也就是item，然后删掉这个元素
+      const idx = cartList.value.findIndex((item) => skuId === item.skuId)
+      cartList.value.splice(idx,1)
+    }
+   
+  }
+  // 清空购物车
+  const clearCart = () => {
+    cartList.value = []
   }
 
   // 单选功能
@@ -75,6 +102,8 @@ export const useCartStore = defineStore('cart',() => {
     allCheck,
     selectedCount,
     selectedPrice,
+    clearCart,
+    updateNewList,
   }
 },{
   persist: true,
