@@ -12,10 +12,11 @@ const checkInfo = ref({})  // 订单对象
 const curAddress = ref({})  // 地址对象
 const getCheckInfo = async () => {
   const res = await getCheckInfoAPI()
-  checkInfo.value = res.data.result
+  checkInfo.value = res.result
+  console.log(checkInfo.value);
   // 适配默认地址
   // 从地址列表中筛选出来 isDefault === 0那一项
-  const item = checkInfo.value.userAddress.find(item => item.isDefault === 0)
+  const item = checkInfo.value.userAddresses.find(item => item.isDefault === 0)
   curAddress.value = item
 }
 onMounted(() => {
@@ -24,7 +25,7 @@ onMounted(() => {
 
 // 控制弹框打开
 const showDialog = ref(false)
-
+console.log(checkInfo);
 const activeAddress = ref({})
 // 切换地址
 const switchAddress = (item) => {

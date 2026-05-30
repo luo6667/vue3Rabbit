@@ -48,7 +48,7 @@ onMounted(() => {
         <h4 data-v-bcb266e0="">猜你喜欢</h4>
       </div>
       <div class="goods-list">
-        <GoodsItem v-for="good in likeList" :key="good.id" :good="good" />
+        <GoodsItem v-for="good in likeList" :key="good.id" :goods="good" />
       </div>
     </div>
   </div>
